@@ -4,8 +4,8 @@ from rest_framework import generics, filters
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Category, Product, Review
-from .serializers import ProductSerializer, ReviewSerializer, CategorySerializer
+from .models import Category, Product, Review, ProductImage
+from .serializers import ProductSerializer, ReviewSerializer, CategorySerializer, ProductImageSerializer
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.pagination import PageNumberPagination
 
@@ -67,4 +67,20 @@ class CategoryList(generics.ListCreateAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.errors, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
+
+class ProductImageList(generics.ListCreateAPIView):
+    permission_classes = (IsOwnerOrReadOnly,)
+    serializer_class = ProductImageSerializer
+
+    def get_queryset(self):
+        product_id = self.kwargs['product_id']
+        return ProductImage.objects.filter(product_id=product_id)
+
+    def perform_create(self, serializer):
+        product_id = self.kwargs['product_id']
+        user = self.request.user
+        if serializer.is_valid():
+            serializer.save(product_id= product_id, user= user)
+            return Response(serializer.errors, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
