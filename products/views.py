@@ -1,9 +1,11 @@
 from django.shortcuts import render
 
 from rest_framework import generics, filters
+from rest_framework.response import Response
+from rest_framework import status, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Category, Product, Review
-from .serializers import ProductSerializer, ReviewSerializer
+from .serializers import ProductSerializer, ReviewSerializer, CategorySerializer
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.pagination import PageNumberPagination
 
@@ -27,7 +29,10 @@ class ProductList(generics.ListCreateAPIView):
         'stock_quantity':['gt','lt'],} # greater than
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        if serializer.is_valid():
+            serializer.save(user=self.request.user)
+            return Response(serializer.errors, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsOwnerOrReadOnly,)
@@ -43,4 +48,23 @@ class ReviewList(generics.ListCreateAPIView):
         return Review.objects.filter(product_id=product_id)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        if serializer.is_valid():
+            serializer.save(user=self.request.user)
+            return Response(serializer.errors, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsOwnerOrReadOnly,)
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+class CategoryList(generics.ListCreateAPIView):
+    queryset = Category.objects.all()
+    permission_classes = (permissions.IsAdminUser,)
+    serializer_class = CategorySerializer
+
+    def perform_create(self, serializer):
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.errors, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
