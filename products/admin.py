@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product
+from .models import Category, Product, Review
 from django.utils.translation import gettext_lazy as _
 # Register your models here.
 
@@ -48,6 +48,9 @@ class CustomProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'price','stock_quantity', 'user', 'created_date')
     search_fields = ('name', 'category__name',)
     list_filter = (PriceRangeFilter, StockAvailabilityFilter, 'category')
-    
+
+class CustomReviewAdmin(admin.ModelAdmin):
+    list_display = ('id','product','rating','comment', 'created_at')  
 admin.site.register(Category)
 admin.site.register(Product, CustomProductAdmin)
+admin.site.register(Review, CustomReviewAdmin)

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 3rd Party
     'rest_framework',
+    'django_filters',
     # Local
     'users.apps.UsersConfig', # new
     'products.apps.ProductsConfig', # new
@@ -49,7 +50,7 @@ INSTALLED_APPS = [
 ]
 REST_FRAMEWORK = { # new
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
 MIDDLEWARE = [

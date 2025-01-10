@@ -28,3 +28,13 @@ class Product(models.Model):
             self.save()
         else:
             raise ValueError('Insufficient stock to fullfil the order')
+
+class Review(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.IntegerField()# 1 to 5 scale
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Review by {self.user.username} for {self.product.name}'
