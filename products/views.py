@@ -48,8 +48,9 @@ class ReviewList(generics.ListCreateAPIView):
         return Review.objects.filter(product_id=product_id)
 
     def perform_create(self, serializer):
+        product_id = self.kwargs['product_id']
         if serializer.is_valid():
-            serializer.save(user=self.request.user)
+            serializer.save(user=self.request.user, product_id=product_id)
             return Response(serializer.errors, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
