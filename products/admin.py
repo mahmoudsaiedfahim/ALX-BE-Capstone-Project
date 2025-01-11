@@ -1,9 +1,10 @@
 from django.contrib import admin
-from .models import Category, Product, Review
+from .models import Category, Product, Review, ProductImage
 from django.utils.translation import gettext_lazy as _
 # Register your models here.
 
 class PriceRangeFilter(admin.SimpleListFilter):
+    # adding price range functionality to the products in the Admin panel.
     title = _('Price Range')
     parameter_name = 'price_range'
 
@@ -25,8 +26,8 @@ class PriceRangeFilter(admin.SimpleListFilter):
             return queryset.filter(price__gte=1000)
         return queryset
 
-
 class StockAvailabilityFilter(admin.SimpleListFilter):
+    # adding stock availability filter to the products.
     title = _('Stock Availability')
     parameter_name = 'stock_availability'
     
@@ -44,13 +45,16 @@ class StockAvailabilityFilter(admin.SimpleListFilter):
         return queryset
 
 class CustomProductAdmin(admin.ModelAdmin):
-    
+    # control list display items that appear in the admin panel.
     list_display = ('name', 'category', 'price','stock_quantity', 'user', 'created_date')
+    # items to search with in Admin panel of products.
     search_fields = ('name', 'category__name',)
     list_filter = (PriceRangeFilter, StockAvailabilityFilter, 'category')
 
 class CustomReviewAdmin(admin.ModelAdmin):
-    list_display = ('id','product','rating','comment', 'created_at')  
+    list_display = ('id','product','rating','comment', 'created_at') 
+
 admin.site.register(Category)
 admin.site.register(Product, CustomProductAdmin)
 admin.site.register(Review, CustomReviewAdmin)
+admin.site.register(ProductImage)

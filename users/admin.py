@@ -5,9 +5,11 @@ from.forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import CustomUser
 # Register your models here.
 class CustomUserAdmin(UserAdmin):
+    # Register the User model to Admin panel.
     #add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
+    # list display controls field items that appear on Admin panel.
     list_display = [
         'name',
         'email',
